@@ -1,0 +1,61 @@
+plugins {
+	id 'fabric-loom' version '1.8-SNAPSHOT'
+	id 'maven-publish'
+}
+
+version = "${project.version}+${project.minecraft_version}"
+group = project.maven_group
+base { archivesName = project.archives_base_name }
+
+repositories {
+	maven { name = 'ParchmentMC'; url = 'https://maven.parchmentmc.org' }
+	maven { url = "https://jitpack.io" }
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings loom.layered() {
+		officialMojangMappings()
+		parchment("org.parchmentmc.data:parchment-1.21:2024.11.10@zip")
+	}
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.4.1")))
+}
+
+processResources {
+	inputs.property "version", project.version
+	
+	var identifier = project.archives_base_name
+	filesMatching("fabric.mod.json") {
+		expand 'id' : identifier,
+			'Id' : identifier.split("_").toList().stream().map((str) -> str[0].toUpperCase() + str.substring(1).toLowerCase()).toArray().join(""),
+			"version": project.version,
+			"group" : project.properties['maven_group']
+	}
+}
+
+tasks.withType(JavaCompile).configureEach { it.options.release = 21 }
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.base.archivesName.get()}"}
+	}
+}
+
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			artifactId = project.archives_base_name
+			from components.java
+		}
+	}
+	
+	repositories {
+	}
+}

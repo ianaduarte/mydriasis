@@ -1,0 +1,23 @@
+{
+	"schemaVersion": 1,
+	"id": "${id}",
+	"version": "${version}",
+	"name": "${Id}",
+	"description": "AGH! MY EYES!",
+	"authors": [ "ianaduarte" ],
+	"contact": {
+		"homepage": "https://modrinth.com/${id}",
+		"sources": "https://github.com/ianaduarte/${id}"
+	},
+	"license": "ARR",
+	"icon": "assets/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": ["${group}.${id}.${Id}"]
+	},
+	"mixins": ["${id}.mixins.json"],
+	"depends": {
+		"minecraft": "~1.21.1",
+		"java": ">=21"
+	}
+}
