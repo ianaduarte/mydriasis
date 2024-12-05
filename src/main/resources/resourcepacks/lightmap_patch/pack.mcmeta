@@ -1,0 +1,6 @@
+{
+    "pack": {
+        "description": "patch minecraft's lightmap shader for mydriasis",
+        "pack_format": 34
+    }
+}

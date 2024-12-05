@@ -1,16 +1,19 @@
 package dev.ianaduarte.mydriasis;
 
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.fabricmc.api.ModInitializer;
 
-public class Mydriasis implements ModInitializer {
+public class Mydriasis implements ClientModInitializer {
 	public static final String MOD_ID = "mydriasis";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	
@@ -43,15 +46,18 @@ public class Mydriasis implements ModInitializer {
 		int k = Mth.floor(position.z);
 		return new BlockPos(i, j, k);
 	}
-	/// @return Visual time of day, for some ungodly reason there's an offset to the sun and moon;<br> I HATE MODULAR ARITHMETIC!!
 	public static float getDaytime(Level level) {
 		return wrap(level.dayTime() + 6000, 0, 24_000) / 24_000f;
 	}
-	public static Vector3f tonemap(Vector3f v) {
-		//return v.mul(1.1f, 1.075f, 1.0f).mul(v);
-		return v.mul(1.06f, 1.04f, 1.01f).mul(v);
-	}
 
 	@Override
-	public void onInitialize() {}
+	public void onInitializeClient() {
+		FabricLoader.getInstance().getModContainer(MOD_ID).ifPresent(modContainer -> {
+			ResourceManagerHelper.registerBuiltinResourcePack(
+				ResourceLocation.fromNamespaceAndPath(MOD_ID, "lightmap_patch"),
+				modContainer,
+				ResourcePackActivationType.DEFAULT_ENABLED
+			);
+		});
+	}
 }

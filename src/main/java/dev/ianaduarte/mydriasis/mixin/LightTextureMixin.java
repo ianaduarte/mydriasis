@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import dev.ianaduarte.mydriasis.Mydriasis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.CompiledShaderProgram;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -39,12 +40,15 @@ public class LightTextureMixin {
 		
 		return engine == null? 0 : engine.getLightValue(at);
 	}
-	
-	@Inject(method = "updateLightTexture", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LightTexture;clampColor(Lorg/joml/Vector3f;)V", shift = At.Shift.BEFORE, ordinal = 2))
-	private void attenuateBrightness(float partialTicks, CallbackInfo ci, @Local(ordinal = 1) Vector3f finalColor, @Local ClientLevel level) {
-		finalColor.mul((float) Mth.lerp(partialTicks, brightnessAdjustmentPrev, brightnessAdjustment));
-		finalColor.set(Mydriasis.tonemap(finalColor));
+	@Inject(method = "updateLightTexture", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/pipeline/TextureTarget;bindWrite(Z)V", shift = At.Shift.BEFORE))
+	private void attenuateBrightness(float f, CallbackInfo ci, @Local CompiledShaderProgram compiledShaderProgram) {
+		compiledShaderProgram.safeGetUniform("MydriasisFactor").set((float) Mth.lerp(f, brightnessAdjustmentPrev, brightnessAdjustment));
 	}
+	/*@Inject(method = "updateLightTexture", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LightTexture;clampColor(Lorg/joml/Vector3f;)V", shift = At.Shift.BEFORE, ordinal = 2))
+	private void attenuateBrightness(float partialTicks, CallbackInfo ci, @Local(ordinal = 1) Vector3f finalColor, @Local ClientLevel level) {
+		//finalColor.mul((float) Mth.lerp(partialTicks, brightnessAdjustmentPrev, brightnessAdjustment));
+		//finalColor.set(Mydriasis.tonemap(finalColor));
+	}*/
 	@Inject(method = "tick", at = @At("HEAD"))
 	private void updateAttenuation(CallbackInfo ci) {
 		Player player = this.minecraft.player;
