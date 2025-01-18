@@ -3,10 +3,10 @@
 	"package": "dev.ianaduarte.mydriasis.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"GameRendererMixin"
 	],
 	"client": [
-		"LightEngineAccessor",
-		"LightTextureMixin"
+		"LightEngineAccessor"
 	],
 	"injectors": {"defaultRequire": 1}
 }

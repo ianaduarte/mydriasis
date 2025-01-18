@@ -56,7 +56,7 @@ public class Mydriasis implements ClientModInitializer {
 			ResourceManagerHelper.registerBuiltinResourcePack(
 				ResourceLocation.fromNamespaceAndPath(MOD_ID, "lightmap_patch"),
 				modContainer,
-				ResourcePackActivationType.DEFAULT_ENABLED
+				ResourcePackActivationType.ALWAYS_ENABLED
 			);
 		});
 	}

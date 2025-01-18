@@ -9,6 +9,7 @@ base { archivesName = project.archives_base_name }
 
 repositories {
 	maven { name = 'ParchmentMC'; url = 'https://maven.parchmentmc.org' }
+	maven { name = "Modrinth"; url = "https://api.modrinth.com/maven" }
 	maven { url = "https://jitpack.io" }
 }
 
@@ -19,6 +20,8 @@ dependencies {
 	}
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modCompileOnly "maven.modrinth:scalablelux:${project.scalablelux_compat}"
+	modCompileOnly "maven.modrinth:moonrise-opt:${project.moonrise_compat}"
 	include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.4.1")))
 }
 
