@@ -1,14 +1,9 @@
 package dev.ianaduarte.mydriasis.mixin;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import com.mojang.blaze3d.systems.RenderSystem;
+import dev.ianaduarte.mydriasis.LightAttenuationGetter;
 import dev.ianaduarte.mydriasis.Mydriasis;
 import dev.ianaduarte.mydriasis.compat.CompatLayer;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.CompiledShaderProgram;
-import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -24,10 +19,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Objects;
-
 @Mixin(GameRenderer.class)
-public class GameRendererMixin {
+public class GameRendererMixin implements LightAttenuationGetter {
 	@Shadow @Final private Minecraft minecraft;
 	@Unique private double brightnessAdjustmentPrev = 1f;
 	@Unique private double brightnessAdjustment = 1f;
@@ -50,18 +43,6 @@ public class GameRendererMixin {
 		return engine == null? 0 : engine.getLightValue(at);
 	}
 	
-	@Inject(method = "renderLevel", at = @At(
-		value = "INVOKE",
-		target = "Lnet/minecraft/client/renderer/GameRenderer;pick(F)V",
-		shift = At.Shift.AFTER
-	))
-	private void setShaderAttenuation(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 0) float f) {
-		CompiledShaderProgram compiledShaderProgram = Objects.requireNonNull(
-			RenderSystem.setShader(CoreShaders.LIGHTMAP), "Lightmap shader not loaded"
-		);
-		compiledShaderProgram.safeGetUniform("MydriasisFactor").set((float) Mth.lerp(f, brightnessAdjustmentPrev, brightnessAdjustment));
-	}
-	
 	@Inject(method = "tick", at = @At("HEAD"))
 	private void fetchAttenuation(CallbackInfo ci) {
 		Player player = this.minecraft.player;
@@ -81,5 +62,10 @@ public class GameRendererMixin {
 		
 		this.brightnessAdjustmentPrev = this.brightnessAdjustment;
 		this.brightnessAdjustment = Mth.lerp(0.1, this.brightnessAdjustment, Mydriasis.gradient(playerLight, 2.5f, 1, 0.90f));
+	}
+	
+	@Override
+	public float getAttenuation(float partialTick) {
+		return (float)Mth.lerp(partialTick, brightnessAdjustmentPrev, brightnessAdjustment);
 	}
 }
