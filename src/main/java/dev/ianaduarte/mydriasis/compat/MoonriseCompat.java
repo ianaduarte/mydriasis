@@ -1,25 +1,25 @@
 package dev.ianaduarte.mydriasis.compat;
 
-import ca.spottedleaf.moonrise.patches.starlight.light.StarLightLightingProvider;
+import ca.spottedleaf.starlight.common.light.StarLightLightingProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 public class MoonriseCompat implements CompatLayer {
 	@Override
 	public boolean hasSkyLight(Level level) {
-		return ((StarLightLightingProvider)level.getLightEngine()).starlight$getLightEngine().hasSkyLight();
+		return ((ca.spottedleaf.starlight.common.light.StarLightLightingProvider)level.getLightEngine()).getLightEngine().hasSkyLight();
 	}
 	@Override
 	public boolean hasBlockLight(Level level) {
-		return ((StarLightLightingProvider)level.getLightEngine()).starlight$getLightEngine().hasSkyLight();
+		return ((StarLightLightingProvider)level.getLightEngine()).getLightEngine().hasSkyLight();
 	}
 	
 	@Override
 	public int getSkyLight(Level level, BlockPos pos) {
-		return ((StarLightLightingProvider)level.getLightEngine()).starlight$getLightEngine().getSkyLightValue(pos, level.getChunk(pos));
+		return ((StarLightLightingProvider)level.getLightEngine()).getLightEngine().getSkyLightValue(pos, level.getChunk(pos));
 	}
 	@Override
 	public int getBlockLight(Level level, BlockPos pos) {
-		return ((StarLightLightingProvider)level.getLightEngine()).starlight$getLightEngine().getBlockLightValue(pos, level.getChunk(pos));
+		return ((StarLightLightingProvider)level.getLightEngine()).getLightEngine().getBlockLightValue(pos, level.getChunk(pos));
 	}
 }

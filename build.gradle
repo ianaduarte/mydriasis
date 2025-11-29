@@ -17,11 +17,11 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.layered() {
 		officialMojangMappings()
-		parchment("org.parchmentmc.data:parchment-1.21.5:2025.06.15@zip")
+		parchment("org.parchmentmc.data:parchment-${project.parchment_version}@zip")
 	}
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	modCompileOnly "maven.modrinth:scalablelux:${project.scalablelux_compat}"
+	modImplementation "maven.modrinth:scalablelux:${project.scalablelux_compat}"
 	modCompileOnly "maven.modrinth:moonrise-opt:${project.moonrise_compat}"
 	include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.4.1")))
 }

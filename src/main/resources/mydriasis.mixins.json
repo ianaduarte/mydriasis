@@ -7,7 +7,8 @@
 	],
 	"client": [
 		"LightEngineAccessor",
-		"LightTextureMixin"
+		"LightTextureMixin",
+		"RenderPipelinesMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1}
